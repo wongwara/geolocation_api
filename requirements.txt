@@ -1,3 +1,4 @@
+pip==24.0
 streamlit>=1.32.2
 chatterbot==1.0.8
 chatterbot-corpus==1.2.0
