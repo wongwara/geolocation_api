@@ -5,6 +5,7 @@ import streamlit as st
 from geopy.geocoders import Nominatim
 import requests
 import folium
+from streamlit_folium import folium_static
 
 # # Initialize the chatbot
 # chatbot = ChatBot('Diagnose Chatbot')
