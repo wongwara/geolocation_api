@@ -1,4 +1,17 @@
 import streamlit as st
+from chatterbot import ChatBot
+from chatterbot.trainers import ChatterBotCorpusTrainer
+from chatterbot.conversation import Statement
+
+# Initialize the chatbot
+chatbot = ChatBot('Diagnose Chatbot')
+
+# Train the chatbot (optional)
+trainer = ChatterBotCorpusTrainer(chatbot)
+trainer.train('chatterbot.corpus.english')
+
+# Initialize chat history
+chat_history = []
 
 # page setup
 st.set_page_config(
@@ -14,7 +27,22 @@ def overview_tab():
 
 def disease_diagnosis_tab():
     st.title('Chatbot for Disease Diagnosis')
-    # Add content for the disease diagnosis tab
+
+    # Get user input
+    user_input = st.text_input('You:', '')
+
+    # Handle user input
+    if st.button('Send'):
+        # Get chatbot response
+        bot_response = chatbot.get_response(user_input)
+        
+        # Save user input and bot response to chat history
+        chat_history.append({'user': user_input, 'bot': str(bot_response)})
+
+    # Display chat history
+    for item in chat_history:
+        st.write('User:', item['user'])
+        st.write('Bot:', item['bot'])
 
 def location_api_tab():
     st.title('Location API')
