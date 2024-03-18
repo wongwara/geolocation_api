@@ -1,7 +1,7 @@
 import streamlit as st
-from chatterbot import ChatBot
-from chatterbot.trainers import ChatterBotCorpusTrainer
-from chatterbot.conversation import Statement
+# from chatterbot import ChatBot
+# from chatterbot.trainers import ChatterBotCorpusTrainer
+# from chatterbot.conversation import Statement
 from geopy.geocoders import Nominatim
 import requests
 import folium
@@ -31,21 +31,21 @@ def overview_tab():
 def disease_diagnosis_tab():
     st.title('Chatbot for Disease Diagnosis')
 
-    # Get user input
-    user_input = st.text_input('You:', '')
+    # # Get user input
+    # user_input = st.text_input('You:', '')
 
-    # Handle user input
-    if st.button('Send'):
-        # Get chatbot response
-        bot_response = chatbot.get_response(user_input)
+    # # Handle user input
+    # if st.button('Send'):
+    #     # Get chatbot response
+    #     bot_response = chatbot.get_response(user_input)
         
-        # Save user input and bot response to chat history
-        chat_history.append({'user': user_input, 'bot': str(bot_response)})
+    #     # Save user input and bot response to chat history
+    #     chat_history.append({'user': user_input, 'bot': str(bot_response)})
 
-    # Display chat history
-    for item in chat_history:
-        st.write('User:', item['user'])
-        st.write('Bot:', item['bot'])
+    # # Display chat history
+    # for item in chat_history:
+    #     st.write('User:', item['user'])
+    #     st.write('Bot:', item['bot'])
 
 
 # Initialize the Geolocation API
