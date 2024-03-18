@@ -6,12 +6,12 @@ from geopy.geocoders import Nominatim
 import requests
 import folium
 
-# Initialize the chatbot
-chatbot = ChatBot('Diagnose Chatbot')
+# # Initialize the chatbot
+# chatbot = ChatBot('Diagnose Chatbot')
 
-# Train the chatbot (optional)
-trainer = ChatterBotCorpusTrainer(chatbot)
-trainer.train('chatterbot.corpus.english')
+# # Train the chatbot (optional)
+# trainer = ChatterBotCorpusTrainer(chatbot)
+# trainer.train('chatterbot.corpus.english')
 
 # Initialize chat history
 chat_history = []
