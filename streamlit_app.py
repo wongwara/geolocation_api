@@ -2,7 +2,7 @@ import streamlit as st
 
 # page setup
 st.set_page_config(
-    page_title="Movie Recommendation With PaLM-2",
+    page_title="Oversea Student Healthcare Chatbot",
     page_icon="🤗💬",
     layout="wide",
     initial_sidebar_state="expanded",
