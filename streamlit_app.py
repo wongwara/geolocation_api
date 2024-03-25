@@ -71,8 +71,19 @@ if 'Find Nearest Pharmacy' in st.session_state:
     user_latitude, user_longitude = fetch_user_location()
     st.write(f'User Location: Latitude {user_latitude}, Longitude {user_longitude}')
     
-    nearest_pharmacy = find_nearest_pharmacy((user_latitude, user_longitude), yellow_pages)
+    nearest_pharmacy = find_nearest_pharmacy((user_latitude, user_longitude), df)
     
     st.write('Nearest Pharmacy Information:')
     st.write(nearest_pharmacy)
-    st.map([{'user': (user_latitude, user_longitude)}, {'nearest_pharmacy': (nearest_pharmacy['latitude'], nearest_pharmacy['longitude'])}])
+    
+    # Create a Folium map centered around the user's location
+    m = folium.Map(location=[user_latitude, user_longitude], zoom_start=12)
+
+    # Add marker for user's location
+    folium.Marker(location=[user_latitude, user_longitude], popup='User Location', icon=folium.Icon(color='blue')).add_to(m)
+
+    # Add marker for nearest pharmacy
+    folium.Marker(location=[nearest_pharmacy['latitude'], nearest_pharmacy['longitude']], popup=nearest_pharmacy['Pharmacy name'], icon=folium.Icon(color='green')).add_to(m)
+
+    # Render the map
+    folium_static(m)
