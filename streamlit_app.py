@@ -53,7 +53,7 @@ def fetch_user_location(latitude, longitude):
         return data.get('lat'), data.get('lon')
     else:
         st.error('Error fetching user location')
-        
+
 # Function to calculate distance between two coordinates
 def calculate_distance(user_location, pharmacy_location):
     return geodesic(user_location, pharmacy_location).kilometers
@@ -75,3 +75,4 @@ if 'Find Nearest Pharmacy' in st.session_state:
     
     st.write('Nearest Pharmacy Information:')
     st.write(nearest_pharmacy)
+    st.map([{'user': (user_latitude, user_longitude)}, {'nearest_pharmacy': (nearest_pharmacy['latitude'], nearest_pharmacy['longitude'])}])
