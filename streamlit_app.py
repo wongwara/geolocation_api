@@ -71,7 +71,7 @@ if 'Find Nearest Pharmacy' in st.session_state:
     user_latitude, user_longitude = fetch_user_location()
     st.write(f'User Location: Latitude {user_latitude}, Longitude {user_longitude}')
     
-    nearest_pharmacy = find_nearest_pharmacy((user_latitude, user_longitude), df)
+    nearest_pharmacy = find_nearest_pharmacy((user_latitude, user_longitude), yellow_pages)
     
     st.write('Nearest Pharmacy Information:')
     st.write(nearest_pharmacy)
