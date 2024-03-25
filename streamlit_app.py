@@ -5,7 +5,9 @@ import streamlit as st
 from geopy.geocoders import Nominatim
 import requests
 import folium
-from streamlit_folium import folium_static
+import json
+from typing import Dict
+import pandas as pd
 
 # # Initialize the chatbot
 # chatbot = ChatBot('Diagnose Chatbot')
@@ -13,6 +15,9 @@ from streamlit_folium import folium_static
 # # Train the chatbot (optional)
 # trainer = ChatterBotCorpusTrainer(chatbot)
 # trainer.train('chatterbot.corpus.english')
+
+yellow_pages = pd.read_csv('yellow_pages_pharmacy_df.csv') 
+nsw_pharmacy = pd.read_csv('nsw_pharmacy_df.csv') 
 
 # Initialize chat history
 chat_history = []
@@ -25,107 +30,82 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-def overview_tab():
-    st.title('Overview')
-    # Add content for the overview tab
+st.title('Oversea Student Healthcare Chatbot')
+st.markdown('Welcome to the Oversea Student Healthcare Chatbot! Please select a tab from the sidebar to get started.')
 
-def disease_diagnosis_tab():
-    st.title('Chatbot for Disease Diagnosis')
+# Sidebar navigation
+st.sidebar.title('Navigation')
+st.sidebar.markdown('Choose a tab to get started.')
+st.sidebar.markdown('---')
+st.sidebar.markdown('**Tabs:**')
+st.sidebar.markdown('- Overview')
+st.sidebar.markdown('- Disease Diagnosis')
+st.sidebar.markdown('- Find Nearest Pharmacy')
+st.sidebar.markdown('- Chatbot for Insurance Information')
+st.sidebar.markdown('---')
+st.sidebar.markdown('**About:**')
+st.sidebar.markdown('This is a chatbot application that provides healthcare information to oversea students. It offers disease diagnosis, pharmacy location, and insurance information services.')
 
-    # # Get user input
-    # user_input = st.text_input('You:', '')
+def fetch_my_location(latitude, longitude):
+    api_key = 'pk.569b2648485cbbc6c23f0a1bc7fd78fb'  
+    url = f'https://us1.locationiq.com/v1/reverse?key={api_key}&lat={latitude}&lon={longitude}&format=json'
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        return data['display_name']
+    else:
+        return None
 
-    # # Handle user input
-    # if st.button('Send'):
-    #     # Get chatbot response
-    #     bot_response = chatbot.get_response(user_input)
-        
-    #     # Save user input and bot response to chat history
-    #     chat_history.append({'user': user_input, 'bot': str(bot_response)})
+NOMINATIM_API_URL = "https://nominatim.openstreetmap.org"
+NOMINATIM_DETAILS_ENDPOINT = f"{NOMINATIM_API_URL}/details"
+NOMINATIM_SEARCH_ENDPOINT = f"{NOMINATIM_API_URL}/search"
+NOMINATIM_REVERSE_ENDPOINT = f"{NOMINATIM_API_URL}/reverse"
 
-    # # Display chat history
-    # for item in chat_history:
-    #     st.write('User:', item['user'])
-    #     st.write('Bot:', item['bot'])
+def fetch_osm_details(osm_id: str, osm_type: str, params: Dict[str, int]) -> dict:
+    params_query = "&".join(f"{param_name}={param_value}" for param_name, param_value in params.items())
+    request_url = f"{NOMINATIM_DETAILS_ENDPOINT}?osmtype={osm_type}&osmid={osm_id}&{params_query}&format=json"
+    print(request_url)
+
+    response = requests.get(request_url)
+    response.raise_for_status()
+    return response.json()
 
 
-# Initialize the Geolocation API
-geolocator = Nominatim(user_agent="location-healthcare-chatbot", timeout=10)
+def fetch_osm_search(query: str, params: Dict[str, int]) -> dict:
+    params_query = "&".join(f"{param_name}={param_value}" for param_name, param_value in params.items())
+    request_url = f"{NOMINATIM_SEARCH_ENDPOINT}?q={query}&{params_query}&format=json"
+    print(request_url)
 
-def get_coordinates_from_postal_code(postal_code):
-    try:
-        location = geolocator.geocode(postal_code)
-        if location:
-            return location.latitude, location.longitude
-    except Exception as e:
-        st.error('Error fetching location:', e)
+    response = requests.get(request_url)
+    response.raise_for_status()
+    return response.json()
 
-def get_nearby_pharmacies(latitude, longitude, api_key):
-    try:
-        url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={latitude},{longitude}&radius=5000&type=pharmacy&key={api_key}"
-        response = requests.get(url)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            st.error('Error fetching nearby pharmacies:', response.text)
-    except Exception as e:
-        st.error('Error fetching nearby pharmacies:', e)
+
+def fetch_osm_reverse(lat: float, lon: float, zoom: int, params: Dict[str, int]) -> dict:
+    params_query = "&".join(f"{param_name}={param_value}" for param_name, param_value in params.items())
+    request_url = f"{NOMINATIM_REVERSE_ENDPOINT}?lat={lat}&lon={lon}&zoom={zoom}&{params_query}&format=json"
+    print(request_url)
+
+    response = requests.get(request_url)
+    response.raise_for_status()
+    return response.json()
 
 def location_api_tab():
     st.title('Find Nearest Pharmacy')
+    st.markdown('This tab helps you find the nearest pharmacy to your current location. Please enter your current location to get started.')
 
-    # Input field to enter postal code
-    postal_code = st.text_input('Enter Postal Code:', '')
+    # Get user's current location
 
-    if st.button('Find'):
-        # Get coordinates from postal code
-        latitude, longitude = get_coordinates_from_postal_code(postal_code)
+def main(command):
+    if command == "details":
+        result = fetch_osm_details(osm_id="175905", osm_type="R", params=query_params)
+    elif command == "search":
+        result = fetch_osm_search(query="New York", params=query_params)
+    elif command == "reverse":
+        result = fetch_osm_reverse(lat=40.7127281, lon=-74.0060152, zoom=10, params=query_params)
+    else:
+        raise Exception("Wrong command.")
 
-        if latitude and longitude:
-            # Fetch nearby pharmacies
-            api_key = "AIzaSyDSuDpjE75aNTRREqqMhlDxwmFHRAz0vcY"
-            nearby_pharmacies = get_nearby_pharmacies(latitude, longitude, api_key)
-
-            if nearby_pharmacies:
-                # Display map with user location and nearby pharmacies
-                m = folium.Map(location=[latitude, longitude], zoom_start=13)
-                folium.Marker([latitude, longitude], popup='Your Location').add_to(m)
-                
-                for result in nearby_pharmacies['results']:
-                    pharmacy_name = result['name']
-                    pharmacy_location = result['geometry']['location']
-                    folium.Marker([pharmacy_location['lat'], pharmacy_location['lng']], popup=pharmacy_name).add_to(m)
-
-                folium_static(m)
-            else:
-                st.error('No nearby pharmacies found.')
-        else:
-            st.error('Invalid postal code.')
-
-
-def insurance_info_tab():
-    st.title('Chatbot for Insurance Information')
-    # Add content for the insurance information tab
-
-
-def main():
-    st.sidebar.title('Navigation')
-    app_mode = st.sidebar.selectbox('Choose a tab', ['Overview', 'Disease Diagnosis', 'Location API', 'Insurance Information'])
-
-    if app_mode == 'Overview':
-        overview_tab()
-    elif app_mode == 'Disease Diagnosis':
-        disease_diagnosis_tab()
-    elif app_mode == 'Location API':
-        location_api_tab()
-    elif app_mode == 'Insurance Information':
-        insurance_info_tab()
-
-if __name__ == "__main__":
-    main()
-
-
-# Save chat history after each interaction
-# save_chat_history(st.session_state.messages)
-
-# https://discuss.streamlit.io/t/web-geolocation-api-to-get-users-location/9493/2
+    pprint(result)
+    with open(f"{command}_result.json", "w") as output_file:
+        output_file.write(json.dumps(result, ensure_ascii=False))
