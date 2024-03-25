@@ -76,6 +76,7 @@ if 'Find Nearest Pharmacy' in st.session_state:
     st.write('Nearest Pharmacy Information:')
     st.write(nearest_pharmacy)
     
+def main():
     # Create a Folium map centered around the user's location
     m = folium.Map(location=[user_latitude, user_longitude], zoom_start=12)
 
@@ -87,3 +88,7 @@ if 'Find Nearest Pharmacy' in st.session_state:
 
     # Render the map
     folium_static(m)
+
+if __name__ == "__main__":
+    main()
+
