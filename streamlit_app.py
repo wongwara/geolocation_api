@@ -8,6 +8,7 @@ import folium
 import json
 from typing import Dict
 import pandas as pd
+import pprint
 
 # # Initialize the chatbot
 # chatbot = ChatBot('Diagnose Chatbot')
@@ -109,3 +110,6 @@ def main(command):
     pprint(result)
     with open(f"{command}_result.json", "w") as output_file:
         output_file.write(json.dumps(result, ensure_ascii=False))
+
+with st.container():
+   st.write("This is inside the container")

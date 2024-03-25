@@ -4,3 +4,5 @@ geopy==2.2.0
 requests==2.31.0
 folium
 streamlit_folium
+requests
+pandas == 2.2.1
