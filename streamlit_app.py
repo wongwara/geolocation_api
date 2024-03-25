@@ -54,6 +54,25 @@ def fetch_user_location(latitude, longitude):
     else:
         st.error('Error fetching user location')
 
+# Add a button to trigger location retrieval
+if st.button('Get My Location'):
+    # JavaScript to obtain the user's location
+    js_code = """
+    navigator.geolocation.getCurrentPosition((position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        // Send latitude and longitude back to Streamlit
+        Shiny.setInputValue('latitude', latitude);
+        Shiny.setInputValue('longitude', longitude);
+    });
+    """
+    st.script(js_code)
+
+# Display latitude obtained from JavaScript
+latitude = st.session_state.latitude
+if latitude:
+    st.write(f'Latitude: {latitude}')
+
 # Function to calculate distance between two coordinates
 def calculate_distance(user_location, pharmacy_location):
     return geodesic(user_location, pharmacy_location).kilometers
