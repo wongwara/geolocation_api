@@ -8,7 +8,7 @@ import folium
 import json
 from typing import Dict
 import pandas as pd
-import pprint
+from geopy.distance import geodesic
 
 # # Initialize the chatbot
 # chatbot = ChatBot('Diagnose Chatbot')
@@ -26,19 +26,15 @@ chat_history = []
 # page setup
 st.set_page_config(
     page_title="Oversea Student Healthcare Chatbot",
-    page_icon="🤗💬",
-    layout="wide",
-    initial_sidebar_state="expanded",
+    page_icon="🤗💬"
 )
 
 st.title('Oversea Student Healthcare Chatbot')
-st.markdown('Welcome to the Oversea Student Healthcare Chatbot! Please select a tab from the sidebar to get started.')
+st.markdown('Welcome to the Oversea Student Healthcare Chatbot!')
 
 # Sidebar navigation
 st.sidebar.title('Navigation')
-st.sidebar.markdown('Choose a tab to get started.')
 st.sidebar.markdown('---')
-st.sidebar.markdown('**Tabs:**')
 st.sidebar.markdown('- Overview')
 st.sidebar.markdown('- Disease Diagnosis')
 st.sidebar.markdown('- Find Nearest Pharmacy')
@@ -46,70 +42,36 @@ st.sidebar.markdown('- Chatbot for Insurance Information')
 st.sidebar.markdown('---')
 st.sidebar.markdown('**About:**')
 st.sidebar.markdown('This is a chatbot application that provides healthcare information to oversea students. It offers disease diagnosis, pharmacy location, and insurance information services.')
+# pk.569b2648485cbbc6c23f0a1bc7fd78fb
 
-def fetch_my_location(latitude, longitude):
-    api_key = 'pk.569b2648485cbbc6c23f0a1bc7fd78fb'  
+def fetch_user_location(latitude, longitude):
+    api_key = 'pk.569b2648485cbbc6c23f0a1bc7fd78fb'
     url = f'https://us1.locationiq.com/v1/reverse?key={api_key}&lat={latitude}&lon={longitude}&format=json'
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
-        return data['display_name']
+        return data.get('lat'), data.get('lon')
     else:
-        return None
+        st.error('Error fetching user location')
+        
+# Function to calculate distance between two coordinates
+def calculate_distance(user_location, pharmacy_location):
+    return geodesic(user_location, pharmacy_location).kilometers
 
-NOMINATIM_API_URL = "https://nominatim.openstreetmap.org"
-NOMINATIM_DETAILS_ENDPOINT = f"{NOMINATIM_API_URL}/details"
-NOMINATIM_SEARCH_ENDPOINT = f"{NOMINATIM_API_URL}/search"
-NOMINATIM_REVERSE_ENDPOINT = f"{NOMINATIM_API_URL}/reverse"
+# Function to find nearest pharmacy
+def find_nearest_pharmacy(user_location, pharmacy_df):
+    pharmacy_df['Distance (km)'] = pharmacy_df.apply(lambda row: calculate_distance(user_location, (row['latitude'], row['longitude'])), axis=1)
+    nearest_pharmacy = pharmacy_df.loc[pharmacy_df['Distance (km)'].idxmin()]
+    return nearest_pharmacy
 
-def fetch_osm_details(osm_id: str, osm_type: str, params: Dict[str, int]) -> dict:
-    params_query = "&".join(f"{param_name}={param_value}" for param_name, param_value in params.items())
-    request_url = f"{NOMINATIM_DETAILS_ENDPOINT}?osmtype={osm_type}&osmid={osm_id}&{params_query}&format=json"
-    print(request_url)
-
-    response = requests.get(request_url)
-    response.raise_for_status()
-    return response.json()
-
-
-def fetch_osm_search(query: str, params: Dict[str, int]) -> dict:
-    params_query = "&".join(f"{param_name}={param_value}" for param_name, param_value in params.items())
-    request_url = f"{NOMINATIM_SEARCH_ENDPOINT}?q={query}&{params_query}&format=json"
-    print(request_url)
-
-    response = requests.get(request_url)
-    response.raise_for_status()
-    return response.json()
-
-
-def fetch_osm_reverse(lat: float, lon: float, zoom: int, params: Dict[str, int]) -> dict:
-    params_query = "&".join(f"{param_name}={param_value}" for param_name, param_value in params.items())
-    request_url = f"{NOMINATIM_REVERSE_ENDPOINT}?lat={lat}&lon={lon}&zoom={zoom}&{params_query}&format=json"
-    print(request_url)
-
-    response = requests.get(request_url)
-    response.raise_for_status()
-    return response.json()
-
-def location_api_tab():
-    st.title('Find Nearest Pharmacy')
-    st.markdown('This tab helps you find the nearest pharmacy to your current location. Please enter your current location to get started.')
-
-    # Get user's current location
-
-def main(command):
-    if command == "details":
-        result = fetch_osm_details(osm_id="175905", osm_type="R", params=query_params)
-    elif command == "search":
-        result = fetch_osm_search(query="New York", params=query_params)
-    elif command == "reverse":
-        result = fetch_osm_reverse(lat=40.7127281, lon=-74.0060152, zoom=10, params=query_params)
-    else:
-        raise Exception("Wrong command.")
-
-    pprint(result)
-    with open(f"{command}_result.json", "w") as output_file:
-        output_file.write(json.dumps(result, ensure_ascii=False))
-
-with st.container():
-   st.write("This is inside the container")
+# Add functionality to find nearest pharmacy
+if 'Find Nearest Pharmacy' in st.session_state:
+    st.subheader('Find Nearest Pharmacy')
+    
+    user_latitude, user_longitude = fetch_user_location()
+    st.write(f'User Location: Latitude {user_latitude}, Longitude {user_longitude}')
+    
+    nearest_pharmacy = find_nearest_pharmacy((user_latitude, user_longitude), yellow_pages)
+    
+    st.write('Nearest Pharmacy Information:')
+    st.write(nearest_pharmacy)
