@@ -62,6 +62,10 @@ def main():
                 popup_text = f"{pharmacy['pharmacy_name']}<br>Distance: {distance:.2f} km"
                 folium.Marker(location=(pharmacy['latitude'], pharmacy['longitude']), popup=popup_text).add_to(marker_cluster)
 
+            # Add a marker for the nearest pharmacy
+            nearest_pharmacy_location = (nearest_pharmacies[0][0]['latitude'], nearest_pharmacies[0][0]['longitude'])
+            folium.Marker(location=nearest_pharmacy_location, popup="Nearest Pharmacy", icon=folium.Icon(color="red")).add_to(m)
+
             # Display the map
             folium_static(m)
         else:
