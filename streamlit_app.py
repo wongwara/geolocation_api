@@ -30,7 +30,7 @@ def main():
         st.write("User location:", user_location)
         
         # Find nearest pharmacies
-        nearest_pharmacies = find_nearest_pharmacies(user_location, yellow_pages, top_n=10)
+        nearest_pharmacies = location_api.find_nearest_pharmacies(user_location, yellow_pages, top_n=10)
         
         if nearest_pharmacies:
             st.subheader("Top 10 Nearest Pharmacies:")
