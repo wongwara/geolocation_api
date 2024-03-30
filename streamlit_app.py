@@ -22,10 +22,9 @@ st.set_page_config(
 st.title('Oversea Student Healthcare Chatbot')
 st.markdown('Welcome to the Oversea Student Healthcare Chatbot!')
 
-# Function to get user location
 def get_user_location():
-    latitude = st.number_input("Enter latitude:")
-    longitude = st.number_input("Enter longitude:")
+    latitude = st.number_input("Enter latitude:", format="%.4f")
+    longitude = st.number_input("Enter longitude:", format="%.4f")
     return latitude, longitude
 
 # Main function
