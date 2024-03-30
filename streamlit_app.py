@@ -21,20 +21,6 @@ st.set_page_config(
 st.title('Oversea Student Healthcare Chatbot')
 st.markdown('Welcome to the Oversea Student Healthcare Chatbot!')
 
-# def find_nearest_pharmacies(user_location, pharmacies, top_n=10):
-#     nearest_pharmacies = []
-#     distances = []
-#     for idx, pharmacy in pharmacies.iterrows():
-#         pharmacy_location = (pharmacy['latitude'], pharmacy['longitude'])
-#         distance = geodesic(user_location, pharmacy_location).kilometers
-#         distances.append((pharmacy, distance))
-#     # Sort distances by distance
-#     sorted_distances = sorted(distances, key=lambda x: x[1])
-#     # Get top N pharmacies
-#     for pharmacy, distance in sorted_distances[:top_n]:
-#         nearest_pharmacies.append((pharmacy, distance))
-#     return nearest_pharmacies
-
 def main():
     st.title("Nearest Pharmacies Finder")
     

@@ -62,7 +62,7 @@ def find_nearest_pharmacies(user_location, pharmacies, top_n=10):
     nearest_pharmacies = []
     distances = []
     for idx, pharmacy in pharmacies.iterrows():
-        pharmacy_location = (pharmacy['latitude'], pharmacy['longitude'])
+        pharmacy_location = float(pharmacy['latitude']), float(pharmacy['longitude'])
         if None not in pharmacy_location:
             distance = geodesic(user_location, pharmacy_location).kilometers
             distances.append((pharmacy, distance))
