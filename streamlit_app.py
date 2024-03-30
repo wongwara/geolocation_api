@@ -21,19 +21,19 @@ st.set_page_config(
 st.title('Oversea Student Healthcare Chatbot')
 st.markdown('Welcome to the Oversea Student Healthcare Chatbot!')
 
-def find_nearest_pharmacies(user_location, pharmacies, top_n=10):
-    nearest_pharmacies = []
-    distances = []
-    for idx, pharmacy in pharmacies.iterrows():
-        pharmacy_location = (pharmacy['latitude'], pharmacy['longitude'])
-        distance = geodesic(user_location, pharmacy_location).kilometers
-        distances.append((pharmacy, distance))
-    # Sort distances by distance
-    sorted_distances = sorted(distances, key=lambda x: x[1])
-    # Get top N pharmacies
-    for pharmacy, distance in sorted_distances[:top_n]:
-        nearest_pharmacies.append((pharmacy, distance))
-    return nearest_pharmacies
+# def find_nearest_pharmacies(user_location, pharmacies, top_n=10):
+#     nearest_pharmacies = []
+#     distances = []
+#     for idx, pharmacy in pharmacies.iterrows():
+#         pharmacy_location = (pharmacy['latitude'], pharmacy['longitude'])
+#         distance = geodesic(user_location, pharmacy_location).kilometers
+#         distances.append((pharmacy, distance))
+#     # Sort distances by distance
+#     sorted_distances = sorted(distances, key=lambda x: x[1])
+#     # Get top N pharmacies
+#     for pharmacy, distance in sorted_distances[:top_n]:
+#         nearest_pharmacies.append((pharmacy, distance))
+#     return nearest_pharmacies
 
 def main():
     st.title("Nearest Pharmacies Finder")
@@ -43,7 +43,7 @@ def main():
     if user_location[0] is not None and user_location[1] is not None:
         st.write("User location:", user_location)
         # Find nearest pharmacies
-        nearest_pharmacies = find_nearest_pharmacies(user_location, yellow_pages, top_n=10)
+        nearest_pharmacies = location_api.find_nearest_pharmacies(user_location, yellow_pages, top_n=10)
         if nearest_pharmacies:
             st.subheader("Top 10 Nearest Pharmacies:")
             for i, (pharmacy, distance) in enumerate(nearest_pharmacies, start=1):

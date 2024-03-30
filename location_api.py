@@ -58,24 +58,14 @@ def read_pharmacies_from_csv(csv_file):
             pharmacies.append(pharmacy)
     return pharmacies
 
-# def find_nearest_pharmacy(user_location, pharmacies):
-#     nearest_pharmacy = None
-#     min_distance = float('inf')
-#     for pharmacy in pharmacies:
-#         pharmacy_location = (pharmacy['latitude'], pharmacy['longitude'])
-#         distance = geodesic(user_location, pharmacy_location).kilometers
-#         if distance < min_distance:
-#             min_distance = distance
-#             nearest_pharmacy = pharmacy
-#     return nearest_pharmacy, min_distance
-
 def find_nearest_pharmacies(user_location, pharmacies, top_n=10):
     nearest_pharmacies = []
     distances = []
-    for pharmacy in pharmacies:
+    for idx, pharmacy in pharmacies.iterrows():
         pharmacy_location = (pharmacy['latitude'], pharmacy['longitude'])
-        distance = geodesic(user_location, pharmacy_location).kilometers
-        distances.append((pharmacy, distance))
+        if None not in pharmacy_location:
+            distance = geodesic(user_location, pharmacy_location).kilometers
+            distances.append((pharmacy, distance))
     # Sort distances by distance
     sorted_distances = sorted(distances, key=lambda x: x[1])
     # Get top N pharmacies
@@ -83,23 +73,24 @@ def find_nearest_pharmacies(user_location, pharmacies, top_n=10):
         nearest_pharmacies.append((pharmacy, distance))
     return nearest_pharmacies
 
-def main():
-    # Get user location
-    user_location = get_user_location()
-    if user_location[0] is not None and user_location[1] is not None:
-        print("User location:", user_location)
-        # Read pharmacies from CSV
-        pharmacies = read_pharmacies_from_csv('yellow_pages_pharmacy_df.csv')
-        # Find nearest pharmacies
-        nearest_pharmacies = find_nearest_pharmacies(user_location, pharmacies, top_n=10)
-        if nearest_pharmacies:
-            print("Top 10 nearest pharmacies:")
-            for i, (pharmacy, distance) in enumerate(nearest_pharmacies, start=1):
-                print(f"#{i}: {pharmacy['name']} - Distance: {distance:.2f} km")
-        else:
-            print("No pharmacies found.")
-    else:
-        print("Error: Failed to retrieve user location.")
 
-if __name__ == "__main__":
-    main()
+# def main():
+#     # Get user location
+#     user_location = get_user_location()
+#     if user_location[0] is not None and user_location[1] is not None:
+#         print("User location:", user_location)
+#         # Read pharmacies from CSV
+#         pharmacies = read_pharmacies_from_csv('yellow_pages_pharmacy_df.csv')
+#         # Find nearest pharmacies
+#         nearest_pharmacies = find_nearest_pharmacies(user_location, pharmacies, top_n=10)
+#         if nearest_pharmacies:
+#             print("Top 10 nearest pharmacies:")
+#             for i, (pharmacy, distance) in enumerate(nearest_pharmacies, start=1):
+#                 print(f"#{i}: {pharmacy['name']} - Distance: {distance:.2f} km")
+#         else:
+#             print("No pharmacies found.")
+#     else:
+#         print("Error: Failed to retrieve user location.")
+
+# if __name__ == "__main__":
+#     main()
