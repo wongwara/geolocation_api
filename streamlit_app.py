@@ -1,21 +1,10 @@
 import streamlit as st
-# from chatterbot import ChatBot
-# from chatterbot.trainers import ChatterBotCorpusTrainer
-# from chatterbot.conversation import Statement
 from geopy.geocoders import Nominatim
 import requests
 import folium
-import json
-from typing import Dict
 import pandas as pd
 from geopy.distance import geodesic
 
-# # Initialize the chatbot
-# chatbot = ChatBot('Diagnose Chatbot')
-
-# # Train the chatbot (optional)
-# trainer = ChatterBotCorpusTrainer(chatbot)
-# trainer.train('chatterbot.corpus.english')
 
 yellow_pages = pd.read_csv('yellow_pages_pharmacy_df.csv') 
 nsw_pharmacy = pd.read_csv('nsw_pharmacy_df.csv') 
@@ -32,82 +21,148 @@ st.set_page_config(
 st.title('Oversea Student Healthcare Chatbot')
 st.markdown('Welcome to the Oversea Student Healthcare Chatbot!')
 
-# Sidebar navigation
-st.sidebar.title('Navigation')
-st.sidebar.markdown('---')
-st.sidebar.markdown('- Overview')
-st.sidebar.markdown('- Disease Diagnosis')
-st.sidebar.markdown('- Find Nearest Pharmacy')
-st.sidebar.markdown('- Chatbot for Insurance Information')
-st.sidebar.markdown('---')
-st.sidebar.markdown('**About:**')
-st.sidebar.markdown('This is a chatbot application that provides healthcare information to oversea students. It offers disease diagnosis, pharmacy location, and insurance information services.')
-# pk.569b2648485cbbc6c23f0a1bc7fd78fb
+def get_user_location():
+    try:
+        response = requests.get('https://api.my-ip.io/v2/ip.json')
+        
+        if response.status_code == 200:
+            location = response.json()
+            if 'location' in location and 'lat' in location['location'] and 'lon' in location['location']:
+                latitude = float(location['location']['lat'])
+                longitude = float(location['location']['lon'])
+                return latitude, longitude
+            else:
+                st.error("Latitude or longitude not found in API response.")
+                return None, None
+        else:
+            st.error("Error:", response.status_code)
+            return None, None
+    except requests.exceptions.RequestException as e:
+        st.error("Error:", e)
+        return None, None
 
-def fetch_user_location(latitude, longitude):
-    api_key = 'pk.569b2648485cbbc6c23f0a1bc7fd78fb'
-    url = f'https://us1.locationiq.com/v1/reverse?key={api_key}&lat={latitude}&lon={longitude}&format=json'
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        return data.get('lat'), data.get('lon')
-    else:
-        st.error('Error fetching user location')
+def read_pharmacies_from_csv(csv_file):
+    pharmacies = []
+    with open(csv_file, 'r', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            try:
+                pharmacy = {
+                    'name': row['pharmacy_name'],
+                    'address': row['address'],
+                    'suburb': row['suburb'],
+                    'postal_code': row['postal_code'],
+                    'latitude': float(row['latitude']),
+                    'longitude': float(row['longitude']),
+                    'tel': row['tel'],
+                    'link_url': row['link_url']
+                }
+            except ValueError:
+                continue
+            pharmacies.append(pharmacy)
+    return pharmacies
 
-# Add a button to trigger location retrieval
-if st.button('Get My Location'):
-    # JavaScript to obtain the user's location
-    js_code = """
-    navigator.geolocation.getCurrentPosition((position) => {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-        // Send latitude and longitude back to Streamlit
-        Shiny.setInputValue('latitude', latitude);
-        Shiny.setInputValue('longitude', longitude);
-    });
-    """
-    st.script(js_code)
+def find_nearest_pharmacies(user_location, pharmacies, top_n=10):
+    nearest_pharmacies = []
+    distances = []
+    for pharmacy in pharmacies:
+        pharmacy_location = (pharmacy['latitude'], pharmacy['longitude'])
+        distance = geodesic(user_location, pharmacy_location).kilometers
+        distances.append((pharmacy, distance))
+    # Sort distances by distance
+    sorted_distances = sorted(distances, key=lambda x: x[1])
+    # Get top N pharmacies
+    for pharmacy, distance in sorted_distances[:top_n]:
+        nearest_pharmacies.append((pharmacy, distance))
+    return nearest_pharmacies
 
-# Display latitude obtained from JavaScript
-latitude = st.session_state.latitude
-if latitude:
-    st.write(f'Latitude: {latitude}')
-
-# Function to calculate distance between two coordinates
-def calculate_distance(user_location, pharmacy_location):
-    return geodesic(user_location, pharmacy_location).kilometers
-
-# Function to find nearest pharmacy
-def find_nearest_pharmacy(user_location, pharmacy_df):
-    pharmacy_df['Distance (km)'] = pharmacy_df.apply(lambda row: calculate_distance(user_location, (row['latitude'], row['longitude'])), axis=1)
-    nearest_pharmacy = pharmacy_df.loc[pharmacy_df['Distance (km)'].idxmin()]
-    return nearest_pharmacy
-
-# Add functionality to find nearest pharmacy
-if 'Find Nearest Pharmacy' in st.session_state:
-    st.subheader('Find Nearest Pharmacy')
-    
-    user_latitude, user_longitude = fetch_user_location()
-    st.write(f'User Location: Latitude {user_latitude}, Longitude {user_longitude}')
-    
-    nearest_pharmacy = find_nearest_pharmacy((user_latitude, user_longitude), yellow_pages)
-    
-    st.write('Nearest Pharmacy Information:')
-    st.write(nearest_pharmacy)
-    
 def main():
-    # Create a Folium map centered around the user's location
-    m = folium.Map(location=[user_latitude, user_longitude], zoom_start=12)
-
-    # Add marker for user's location
-    folium.Marker(location=[user_latitude, user_longitude], popup='User Location', icon=folium.Icon(color='blue')).add_to(m)
-
-    # Add marker for nearest pharmacy
-    folium.Marker(location=[nearest_pharmacy['latitude'], nearest_pharmacy['longitude']], popup=nearest_pharmacy['Pharmacy name'], icon=folium.Icon(color='green')).add_to(m)
-
-    # Render the map
-    folium_static(m)
+    st.title("Nearest Pharmacies Finder")
+    
+    # Get user location
+    user_location = get_user_location()
+    if user_location[0] is not None and user_location[1] is not None:
+        st.write("User location:", user_location)
+        # Read pharmacies from CSV
+        pharmacies = read_pharmacies_from_csv('yellow_pages_pharmacy_df.csv')
+        # Find nearest pharmacies
+        nearest_pharmacies = find_nearest_pharmacies(user_location, pharmacies, top_n=10)
+        if nearest_pharmacies:
+            st.subheader("Top 10 Nearest Pharmacies:")
+            for i, (pharmacy, distance) in enumerate(nearest_pharmacies, start=1):
+                st.write(f"#{i}: {pharmacy['name']} - Distance: {distance:.2f} km")
+        else:
+            st.error("No pharmacies found.")
+    else:
+        st.error("Failed to retrieve user location.")
 
 if __name__ == "__main__":
     main()
+
+# def fetch_user_location(latitude, longitude):
+#     api_key = 'pk.569b2648485cbbc6c23f0a1bc7fd78fb'
+#     url = f'https://us1.locationiq.com/v1/reverse?key={api_key}&lat={latitude}&lon={longitude}&format=json'
+#     response = requests.get(url)
+#     if response.status_code == 200:
+#         data = response.json()
+#         return data.get('lat'), data.get('lon')
+#     else:
+#         st.error('Error fetching user location')
+
+# # Add a button to trigger location retrieval
+# if st.button('Get My Location'):
+#     # JavaScript to obtain the user's location
+#     js_code = """
+#     navigator.geolocation.getCurrentPosition((position) => {
+#         const latitude = position.coords.latitude;
+#         const longitude = position.coords.longitude;
+#         // Send latitude and longitude back to Streamlit
+#         Shiny.setInputValue('latitude', latitude);
+#         Shiny.setInputValue('longitude', longitude);
+#     });
+#     """
+#     st.script(js_code)
+
+# # Display latitude obtained from JavaScript
+# latitude = st.session_state.latitude
+# if latitude:
+#     st.write(f'Latitude: {latitude}')
+
+# # Function to calculate distance between two coordinates
+# def calculate_distance(user_location, pharmacy_location):
+#     return geodesic(user_location, pharmacy_location).kilometers
+
+# # Function to find nearest pharmacy
+# def find_nearest_pharmacy(user_location, pharmacy_df):
+#     pharmacy_df['Distance (km)'] = pharmacy_df.apply(lambda row: calculate_distance(user_location, (row['latitude'], row['longitude'])), axis=1)
+#     nearest_pharmacy = pharmacy_df.loc[pharmacy_df['Distance (km)'].idxmin()]
+#     return nearest_pharmacy
+
+# # Add functionality to find nearest pharmacy
+# if 'Find Nearest Pharmacy' in st.session_state:
+#     st.subheader('Find Nearest Pharmacy')
+    
+#     user_latitude, user_longitude = fetch_user_location()
+#     st.write(f'User Location: Latitude {user_latitude}, Longitude {user_longitude}')
+    
+#     nearest_pharmacy = find_nearest_pharmacy((user_latitude, user_longitude), yellow_pages)
+    
+#     st.write('Nearest Pharmacy Information:')
+#     st.write(nearest_pharmacy)
+    
+# def main():
+#     # Create a Folium map centered around the user's location
+#     m = folium.Map(location=[user_latitude, user_longitude], zoom_start=12)
+
+#     # Add marker for user's location
+#     folium.Marker(location=[user_latitude, user_longitude], popup='User Location', icon=folium.Icon(color='blue')).add_to(m)
+
+#     # Add marker for nearest pharmacy
+#     folium.Marker(location=[nearest_pharmacy['latitude'], nearest_pharmacy['longitude']], popup=nearest_pharmacy['Pharmacy name'], icon=folium.Icon(color='green')).add_to(m)
+
+#     # Render the map
+#     folium_static(m)
+
+# if __name__ == "__main__":
+#     main()
 
