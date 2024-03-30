@@ -49,11 +49,13 @@ def main():
     st.title("User Location and Nearest Pharmacies Finder")
     st.write("Please provide your location and find the nearest pharmacies.")
 
-    # Button to trigger location input
-        user_location = get_user_location()
+    # Get user location
+    user_location = get_user_location()
+    if user_location[0] is not None and user_location[1] is not None:
         st.write("User location:", user_location)
+
         # Find nearest pharmacies
-        nearest_pharmacies = location_api.find_nearest_pharmacies((latitude, longitude), yellow_pages, top_n=10)
+        nearest_pharmacies = location_api.find_nearest_pharmacies(user_location, yellow_pages, top_n=10)
 
         if nearest_pharmacies:
             st.subheader("Top 10 Nearest Pharmacies:")
@@ -61,7 +63,7 @@ def main():
                 st.write(f"#{i}: {pharmacy['pharmacy_name']} - Distance: {distance:.2f} km")
 
             # Create a Folium map
-            map_center = (latitude, longitude)
+            map_center = user_location
             m = folium.Map(location=map_center, zoom_start=10)
 
             # Add markers for user location and nearest pharmacies
@@ -74,9 +76,12 @@ def main():
             folium_static(m)
         else:
             st.error("No pharmacies found.")
+    else:
+        st.error("Failed to retrieve user location.")
 
 if __name__ == "__main__":
     main()
+
 
 
 # def main():
