@@ -16,12 +16,16 @@ chat_history = []
 
 # page setup
 st.set_page_config(
-    page_title="Oversea Student Healthcare Chatbot",
+    page_title="Oversea Student Healthcare Find Nearest Pharmacies",
     page_icon="🤗💬"
 )
 
-st.title('Oversea Student Healthcare Chatbot')
-st.markdown('Welcome to the Oversea Student Healthcare Chatbot!')
+st.title('Oversea Student Healthcare Find Nearest Pharmacies')
+st.markdown('Welcome to New South Wales Nearest Pharmacies finding!')
+st.markdown('We will need you to provide your current latitude and longitude.')
+st.markdown('Once you provide the latitude and longitude, we will find the nearest pharmacies for you.')
+st.markdown('You can find your current location from [here](https://www.gps-coordinates.net/my-location)')
+
 
 def get_user_location():
     default_latitude = -33.8837
