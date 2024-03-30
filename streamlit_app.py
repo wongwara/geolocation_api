@@ -48,6 +48,8 @@ def main():
         st.write("Try Sydnet Westfield location: lat -33.870098 and long 151.208817.")
         st.write("Try Sydney Opera House location: lat -33.85681 and long 151.21514.")
         st.write("Try Sydney Airport location: lat -33.9461 and long 151.17722.")
+        st.write("Try Sydney Olympic Park location: lat -33.848461 and long 151.063713.")
+        st.write("Try Penrith library location: lat -33.7505 and long 150.6899.")
         # Find nearest pharmacies
         nearest_pharmacies = location_api.find_nearest_pharmacies(user_location, yellow_pages, top_n=10)
 
