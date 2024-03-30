@@ -3,6 +3,7 @@ import requests
 from geopy.distance import geodesic
 import time 
 # https://www.my-ip.io/dedicated
+
 def get_user_location():
     try:
         response = requests.get('https://api.my-ip.io/v2/ip.json')

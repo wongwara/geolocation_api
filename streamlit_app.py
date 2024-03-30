@@ -21,6 +21,19 @@ st.set_page_config(
 st.title('Oversea Student Healthcare Chatbot')
 st.markdown('Welcome to the Oversea Student Healthcare Chatbot!')
 
+st.write("Getting user location...")
+
+js_code = """
+navigator.geolocation.getCurrentPosition(position => {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    const location = {latitude, longitude};
+    window.parent.postMessage(location, "*");
+});
+"""
+
+st.components.v1.html(js_code)
+
 def main():
     st.title("Nearest Pharmacies Finder")
     
