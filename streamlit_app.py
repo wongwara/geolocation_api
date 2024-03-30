@@ -52,7 +52,7 @@ def main():
 
             # Create a Folium map
             map_center = user_location
-            m = folium.Map(location=map_center, zoom_start=20)
+            m = folium.Map(location=map_center, zoom_start=15)
 
             # Create a MarkerCluster
             marker_cluster = MarkerCluster().add_to(m)
