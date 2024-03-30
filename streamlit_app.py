@@ -1,8 +1,9 @@
 import streamlit as st
 from geopy.geocoders import Nominatim
 import requests
-import folium
+import folium 
 import pandas as pd
+from streamlit_folium import folium_static
 from geopy.distance import geodesic
 import location_api
 
