@@ -4,7 +4,7 @@ import requests
 import folium
 import pandas as pd
 from geopy.distance import geodesic
-
+import location_api
 
 yellow_pages = pd.read_csv('yellow_pages_pharmacy_df.csv') 
 nsw_pharmacy = pd.read_csv('nsw_pharmacy_df.csv') 
@@ -21,51 +21,10 @@ st.set_page_config(
 st.title('Oversea Student Healthcare Chatbot')
 st.markdown('Welcome to the Oversea Student Healthcare Chatbot!')
 
-def get_user_location():
-    try:
-        response = requests.get('https://api.my-ip.io/v2/ip.json')
-        
-        if response.status_code == 200:
-            location = response.json()
-            if 'location' in location and 'lat' in location['location'] and 'lon' in location['location']:
-                latitude = float(location['location']['lat'])
-                longitude = float(location['location']['lon'])
-                return latitude, longitude
-            else:
-                st.error("Latitude or longitude not found in API response.")
-                return None, None
-        else:
-            st.error("Error:", response.status_code)
-            return None, None
-    except requests.exceptions.RequestException as e:
-        st.error("Error:", e)
-        return None, None
-
-def read_pharmacies_from_csv(csv_file):
-    pharmacies = []
-    with open(csv_file, 'r', encoding='utf-8') as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            try:
-                pharmacy = {
-                    'name': row['pharmacy_name'],
-                    'address': row['address'],
-                    'suburb': row['suburb'],
-                    'postal_code': row['postal_code'],
-                    'latitude': float(row['latitude']),
-                    'longitude': float(row['longitude']),
-                    'tel': row['tel'],
-                    'link_url': row['link_url']
-                }
-            except ValueError:
-                continue
-            pharmacies.append(pharmacy)
-    return pharmacies
-
 def find_nearest_pharmacies(user_location, pharmacies, top_n=10):
     nearest_pharmacies = []
     distances = []
-    for pharmacy in pharmacies:
+    for idx, pharmacy in pharmacies.iterrows():
         pharmacy_location = (pharmacy['latitude'], pharmacy['longitude'])
         distance = geodesic(user_location, pharmacy_location).kilometers
         distances.append((pharmacy, distance))
@@ -80,17 +39,15 @@ def main():
     st.title("Nearest Pharmacies Finder")
     
     # Get user location
-    user_location = get_user_location()
+    user_location = location_api.get_user_location()
     if user_location[0] is not None and user_location[1] is not None:
         st.write("User location:", user_location)
-        # Read pharmacies from CSV
-        pharmacies = read_pharmacies_from_csv('yellow_pages_pharmacy_df.csv')
         # Find nearest pharmacies
-        nearest_pharmacies = find_nearest_pharmacies(user_location, pharmacies, top_n=10)
+        nearest_pharmacies = find_nearest_pharmacies(user_location, yellow_pages, top_n=10)
         if nearest_pharmacies:
             st.subheader("Top 10 Nearest Pharmacies:")
             for i, (pharmacy, distance) in enumerate(nearest_pharmacies, start=1):
-                st.write(f"#{i}: {pharmacy['name']} - Distance: {distance:.2f} km")
+                st.write(f"#{i}: {pharmacy['pharmacy_name']} - Distance: {distance:.2f} km")
         else:
             st.error("No pharmacies found.")
     else:
