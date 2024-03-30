@@ -31,24 +31,6 @@ def get_user_location():
     
     return latitude, longitude
 
-
-# Function to create a map centered around New South Wales
-def create_nsw_map():
-    # Coordinates for New South Wales
-    nsw_coords = (-31.840233, 145.612793)
-    # Create a map centered around New South Wales
-    map_nsw = folium.Map(location=nsw_coords, zoom_start=6)
-    return map_nsw
-
-# Function to add markers for user location and other locations on the map
-def add_markers(map_obj, user_location, other_locations):
-    # Add marker for user location with a different color
-    folium.Marker(user_location, popup="Your Location", icon=folium.Icon(color="green")).add_to(map_obj)
-    # Add markers for other locations
-    for loc in other_locations:
-        folium.Marker(loc, popup="Pharmacy", icon=folium.Icon(color="blue")).add_to(map_obj)
-
-# Main function
 def main():
     st.title("User Location and Nearest Pharmacies Finder")
     st.write("Please provide your location and find the nearest pharmacies.")
@@ -70,11 +52,14 @@ def main():
             map_center = user_location
             m = folium.Map(location=map_center, zoom_start=10)
 
+            # Create a MarkerCluster
+            marker_cluster = MarkerCluster().add_to(m)
+
             # Add markers for user location and nearest pharmacies
             folium.Marker(location=map_center, popup="Your Location", icon=folium.Icon(color="green")).add_to(m)
-            for pharmacy, _ in nearest_pharmacies:
-                folium.Marker(location=[pharmacy['latitude'], pharmacy['longitude']],
-                              popup=pharmacy['pharmacy_name']).add_to(m)
+            for pharmacy, distance in nearest_pharmacies:
+                popup_text = f"{pharmacy['pharmacy_name']}<br>Distance: {distance:.2f} km"
+                folium.Marker(location=(pharmacy['latitude'], pharmacy['longitude']), popup=popup_text).add_to(marker_cluster)
 
             # Display the map
             folium_static(m)
@@ -85,6 +70,59 @@ def main():
 
 if __name__ == "__main__":
     main()
+# # Function to create a map centered around New South Wales
+# def create_nsw_map():
+#     # Coordinates for New South Wales
+#     nsw_coords = (-31.840233, 145.612793)
+#     # Create a map centered around New South Wales
+#     map_nsw = folium.Map(location=nsw_coords, zoom_start=6)
+#     return map_nsw
+
+# # Function to add markers for user location and other locations on the map
+# def add_markers(map_obj, user_location, other_locations):
+#     # Add marker for user location with a different color
+#     folium.Marker(user_location, popup="Your Location", icon=folium.Icon(color="green")).add_to(map_obj)
+#     # Add markers for other locations
+#     for loc in other_locations:
+#         folium.Marker(loc, popup="Pharmacy", icon=folium.Icon(color="blue")).add_to(map_obj)
+
+# # Main function
+# def main():
+#     st.title("User Location and Nearest Pharmacies Finder")
+#     st.write("Please provide your location and find the nearest pharmacies.")
+
+#     # Get user location
+#     user_location = get_user_location()
+#     if user_location[0] is not None and user_location[1] is not None:
+#         st.write("User location:", user_location)
+
+#         # Find nearest pharmacies
+#         nearest_pharmacies = location_api.find_nearest_pharmacies(user_location, yellow_pages, top_n=10)
+
+#         if nearest_pharmacies:
+#             st.subheader("Top 10 Nearest Pharmacies:")
+#             for i, (pharmacy, distance) in enumerate(nearest_pharmacies, start=1):
+#                 st.write(f"#{i}: {pharmacy['pharmacy_name']} - Distance: {distance:.2f} km")
+
+#             # Create a Folium map
+#             map_center = user_location
+#             m = folium.Map(location=map_center, zoom_start=10)
+
+#             # Add markers for user location and nearest pharmacies
+#             folium.Marker(location=map_center, popup="Your Location", icon=folium.Icon(color="green")).add_to(m)
+#             for pharmacy, _ in nearest_pharmacies:
+#                 folium.Marker(location=[pharmacy['latitude'], pharmacy['longitude']],
+#                               popup=pharmacy['pharmacy_name']).add_to(m)
+
+#             # Display the map
+#             folium_static(m)
+#         else:
+#             st.error("No pharmacies found.")
+#     else:
+#         st.error("Failed to retrieve user location.")
+
+# if __name__ == "__main__":
+#     main()
 
 
 
