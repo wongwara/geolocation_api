@@ -22,11 +22,15 @@ st.set_page_config(
 st.title('Oversea Student Healthcare Chatbot')
 st.markdown('Welcome to the Oversea Student Healthcare Chatbot!')
 
-# Function to get user location with custom formatting and range restrictions
 def get_user_location():
-    latitude = st.number_input("Enter latitude: - ", format="%.4f", min_value=-90.0, max_value=90.0)
-    longitude = st.number_input("Enter longitude:", format="%.4f")
+    default_latitude = -33.8837
+    default_longitude = 151.2006
+    
+    latitude = st.number_input("Enter latitude:", format="%.4f", min_value=-90.0, max_value=90.0, value=default_latitude)
+    longitude = st.number_input("Enter longitude:", format="%.4f", value=default_longitude)
+    
     return latitude, longitude
+
 
 # Function to create a map centered around New South Wales
 def create_nsw_map():
