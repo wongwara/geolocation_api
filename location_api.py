@@ -4,39 +4,39 @@ from geopy.distance import geodesic
 import time 
 # https://www.my-ip.io/dedicated
 
-def get_user_location():
-    try:
-        response = requests.get('https://api.my-ip.io/v2/ip.json')
+# def get_user_location():
+#     try:
+#         response = requests.get('https://api.my-ip.io/v2/ip.json')
         
-        # Check if the response status code is 429 (Rate Limit Exceeded)
-        if response.status_code == 429:
-            print("Rate limit exceeded. Waiting for cooldown...")
-            time.sleep(120)  # Wait for 60 seconds before retrying
-            response = requests.get('https://api.my-ip.io/v2/ip.json')  # Retry the request
+#         # Check if the response status code is 429 (Rate Limit Exceeded)
+#         if response.status_code == 429:
+#             print("Rate limit exceeded. Waiting for cooldown...")
+#             time.sleep(120)  # Wait for 60 seconds before retrying
+#             response = requests.get('https://api.my-ip.io/v2/ip.json')  # Retry the request
 
-        if response.status_code == 200:
-            location = response.json()
-            print("API response:", location)  # Debugging: Print API response
-            if 'location' in location and 'lat' in location['location'] and 'lon' in location['location']:
-                latitude = float(location['location']['lat'])
-                longitude = float(location['location']['lon'])
-                return latitude, longitude
-            else:
-                print("Latitude or longitude not found in API response.")
-                return None, None
-        else:
-            print("Error:", response.status_code)
-            return None, None
-    except requests.exceptions.RequestException as e:
-        print("Error:", e)
-        return None, None
+#         if response.status_code == 200:
+#             location = response.json()
+#             print("API response:", location)  # Debugging: Print API response
+#             if 'location' in location and 'lat' in location['location'] and 'lon' in location['location']:
+#                 latitude = float(location['location']['lat'])
+#                 longitude = float(location['location']['lon'])
+#                 return latitude, longitude
+#             else:
+#                 print("Latitude or longitude not found in API response.")
+#                 return None, None
+#         else:
+#             print("Error:", response.status_code)
+#             return None, None
+#     except requests.exceptions.RequestException as e:
+#         print("Error:", e)
+#         return None, None
 
-latitude, longitude = get_user_location()
-if latitude is not None and longitude is not None:
-    print("Latitude:", latitude)
-    print("Longitude:", longitude)
-else:
-    print("Error: Failed to retrieve user location.")
+# latitude, longitude = get_user_location()
+# if latitude is not None and longitude is not None:
+#     print("Latitude:", latitude)
+#     print("Longitude:", longitude)
+# else:
+#     print("Error: Failed to retrieve user location.")
 
 def read_pharmacies_from_csv(csv_file):
     pharmacies = []
