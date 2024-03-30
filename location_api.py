@@ -58,20 +58,46 @@ def read_pharmacies_from_csv(csv_file):
             pharmacies.append(pharmacy)
     return pharmacies
 
+from geopy.distance import geodesic
+
 def find_nearest_pharmacies(user_location, pharmacies, top_n=10):
     nearest_pharmacies = []
     distances = []
     for idx, pharmacy in pharmacies.iterrows():
-        pharmacy_location = float(pharmacy['latitude']), float(pharmacy['longitude'])
-        if None not in pharmacy_location:
-            distance = geodesic(user_location, pharmacy_location).kilometers
-            distances.append((pharmacy, distance))
+        try:
+            latitude = float(pharmacy['latitude'])
+            longitude = float(pharmacy['longitude'])
+        except ValueError:
+            continue  # Skip this pharmacy if latitude or longitude is not a valid float
+        
+        pharmacy_location = (latitude, longitude)
+        distance = geodesic(user_location, pharmacy_location).kilometers
+        distances.append((pharmacy, distance))
+    
     # Sort distances by distance
     sorted_distances = sorted(distances, key=lambda x: x[1])
+    
     # Get top N pharmacies
     for pharmacy, distance in sorted_distances[:top_n]:
         nearest_pharmacies.append((pharmacy, distance))
+    
     return nearest_pharmacies
+
+
+# def find_nearest_pharmacies(user_location, pharmacies, top_n=10):
+#     nearest_pharmacies = []
+#     distances = []
+#     for idx, pharmacy in pharmacies.iterrows():
+#         pharmacy_location = float(pharmacy['latitude']), float(pharmacy['longitude'])
+#         if None not in pharmacy_location:
+#             distance = geodesic(user_location, pharmacy_location).kilometers
+#             distances.append((pharmacy, distance))
+#     # Sort distances by distance
+#     sorted_distances = sorted(distances, key=lambda x: x[1])
+#     # Get top N pharmacies
+#     for pharmacy, distance in sorted_distances[:top_n]:
+#         nearest_pharmacies.append((pharmacy, distance))
+#     return nearest_pharmacies
 
 
 # def main():

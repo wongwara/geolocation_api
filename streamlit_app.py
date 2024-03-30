@@ -68,17 +68,7 @@ if __name__ == "__main__":
 
 # # Add a button to trigger location retrieval
 # if st.button('Get My Location'):
-#     # JavaScript to obtain the user's location
-#     js_code = """
-#     navigator.geolocation.getCurrentPosition((position) => {
-#         const latitude = position.coords.latitude;
-#         const longitude = position.coords.longitude;
-#         // Send latitude and longitude back to Streamlit
-#         Shiny.setInputValue('latitude', latitude);
-#         Shiny.setInputValue('longitude', longitude);
-#     });
-#     """
-#     st.script(js_code)
+#     latitude, longitude = fetch_user_location()
 
 # # Display latitude obtained from JavaScript
 # latitude = st.session_state.latitude
