@@ -42,12 +42,26 @@ def main():
     user_location = location_api.get_user_location()
     if user_location[0] is not None and user_location[1] is not None:
         st.write("User location:", user_location)
+        
         # Find nearest pharmacies
-        nearest_pharmacies = location_api.find_nearest_pharmacies(user_location, yellow_pages, top_n=10)
+        nearest_pharmacies = find_nearest_pharmacies(user_location, yellow_pages, top_n=10)
+        
         if nearest_pharmacies:
             st.subheader("Top 10 Nearest Pharmacies:")
             for i, (pharmacy, distance) in enumerate(nearest_pharmacies, start=1):
                 st.write(f"#{i}: {pharmacy['pharmacy_name']} - Distance: {distance:.2f} km")
+            
+            # Create a Folium map
+            map_center = user_location[::-1]  # Reverse latitude and longitude for Folium
+            m = folium.Map(location=map_center, zoom_start=10)
+            
+            # Add markers for nearest pharmacies
+            for pharmacy, _ in nearest_pharmacies:
+                folium.Marker(location=[pharmacy['latitude'], pharmacy['longitude']],
+                              popup=pharmacy['pharmacy_name']).add_to(m)
+            
+            # Display the map
+            folium_static(m)
         else:
             st.error("No pharmacies found.")
     else:
