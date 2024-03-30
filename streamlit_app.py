@@ -27,8 +27,8 @@ def get_user_location():
     default_latitude = -33.8837
     default_longitude = 151.2006
     
-    latitude = st.number_input("Enter latitude:", format="%.4f", min_value=-90.0, max_value=90.0, value=default_latitude)
-    longitude = st.number_input("Enter longitude:", format="%.4f", value=default_longitude)
+    latitude = st.number_input("Enter latitude:", format="%.6f", min_value=-90.0, max_value=90.0, value=default_latitude)
+    longitude = st.number_input("Enter longitude:", format="%.6f", value=default_longitude)
     
     return latitude, longitude
 
