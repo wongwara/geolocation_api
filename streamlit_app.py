@@ -32,6 +32,7 @@ def get_user_location():
     
     return latitude, longitude
 
+st.write("Try Sydnet Westfield location: lat -33.870098 and long 151.208817.")
 def main():
     st.title("User Location and Nearest Pharmacies Finder")
     st.write("Please provide your location and find the nearest pharmacies.")
