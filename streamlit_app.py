@@ -21,24 +21,27 @@ st.set_page_config(
 st.title('Oversea Student Healthcare Chatbot')
 st.markdown('Welcome to the Oversea Student Healthcare Chatbot!')
 
-st.write("Getting user location...")
+# Function to get user location
+def get_user_location():
+    latitude = st.number_input("Enter latitude:")
+    longitude = st.number_input("Enter longitude:")
+    return latitude, longitude
 
-js_code = """
-navigator.geolocation.getCurrentPosition(position => {
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
-    const location = {latitude, longitude};
-    window.parent.postMessage(location, "*");
-});
-"""
+# Main function
+def main():
+    st.title("User Location")
+    st.write("Please provide your location.")
 
-st.components.v1.html(js_code)
+    # Button to trigger location input
+    if st.button("Get Location"):
+        latitude, longitude = get_user_location()
+        st.write("User Location:", latitude, longitude)
 
 def main():
     st.title("Nearest Pharmacies Finder")
     
     # Get user location
-    user_location = location_api.get_user_location()
+    user_location = get_user_location()
     if user_location[0] is not None and user_location[1] is not None:
         st.write("User location:", user_location)
         
