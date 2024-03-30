@@ -50,10 +50,8 @@ def main():
     st.write("Please provide your location and find the nearest pharmacies.")
 
     # Button to trigger location input
-    if st.button("Get Location"):
-        latitude, longitude = get_user_location()
-        st.write("User Location:", latitude, longitude)
-
+        user_location = get_user_location()
+        st.write("User location:", user_location)
         # Find nearest pharmacies
         nearest_pharmacies = location_api.find_nearest_pharmacies((latitude, longitude), yellow_pages, top_n=10)
 
