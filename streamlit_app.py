@@ -120,17 +120,15 @@ st.set_page_config(
 )
 
 st.title('Oversea Student Healthcare Find Nearest Pharmacies')
-st.markdown('Welcome to New South Wales Nearest Pharmacies finding!')
-st.markdown('We will need you to provide your current latitude and longitude.')
-st.markdown('Once you provide the latitude and longitude, we will find the nearest pharmacies for you.')
-st.markdown('You can find your current location from [here](https://www.gps-coordinates.net/my-location)')
-
+st.markdown('Welcome to New South Wales Nearest Pharmacies finding!, We will need you to provide your current latitude and longitude.')
+st.markdown('Once you provide the latitude and longitude, we will find the nearest pharmacies for you. You can find your current location from [here](https://www.gps-coordinates.net/my-location)')
 
 def get_user_location_from_chat():
     st.text("Bot: Please provide your current latitude and longitude in the following format: 'latitude, longitude'")
     user_input = st.text_input("You:", value="-33.8837,151.2006")
-
-    return user_input
+    if st.button("Submit"):
+        chat_history.append(("You", user_input))
+        return user_input
 
 st.title('You can try the following locations:')
 st.write("Try Sydnet Westfield location: lat -33.870098 and long 151.208817.")
@@ -170,7 +168,7 @@ def chat():
                 st.subheader("Top 10 Nearest Pharmacies:")
                 for i, (pharmacy, distance) in enumerate(nearest_pharmacies, start=1):
                     st.write(f"#{i}: {pharmacy['pharmacy_name']} - Distance: {distance:.2f} km")
-                    
+
             else:
                 st.error("No pharmacies found.")
         except ValueError:
