@@ -123,7 +123,7 @@ st.title('Oversea Student Healthcare Find Nearest Pharmacies')
 st.markdown('Welcome to New South Wales Nearest Pharmacies finding!, We will need you to provide your current latitude and longitude.')
 st.markdown('Once you provide the latitude and longitude, we will find the nearest pharmacies for you. You can find your current location from [here](https://www.gps-coordinates.net/my-location)')
 
-st.subtitle('You can try the following locations:')
+st.title('You can try the following locations:')
 st.write("Try Sydnet Westfield location: lat -33.870098 and long 151.208817.")
 st.write("Try Sydney Opera House location: lat -33.85681 and long 151.21514.")
 st.write("Try Sydney Airport location: lat -33.9461 and long 151.17722.")
