@@ -172,9 +172,9 @@ def chat():
 if __name__ == "__main__":
     chat()
     st.subheader('You can try the following locations:')
-    st.write("Try Sydnet Westfield location: -33.870098,151.208817.")
-    st.write("Try Sydney Opera House location: -33.85681,151.21514.")
-    st.write("Try Sydney Airport location: -33.9461,151.17722.")
-    st.write("Try Sydney Olympic Park location:  -33.848461,151.063713.")
-    st.write("Try Penrith library location: -33.7505,150.6899.")
+    st.write("Try Sydnet Westfield location: -33.870098,151.208817")
+    st.write("Try Sydney Opera House location: -33.85681,151.21514")
+    st.write("Try Sydney Airport location: -33.9461,151.17722")
+    st.write("Try Sydney Olympic Park location:  -33.848461,151.063713")
+    st.write("Try Penrith library location: -33.7505,150.6899")
 
