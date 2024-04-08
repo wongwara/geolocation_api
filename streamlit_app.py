@@ -125,8 +125,6 @@ st.markdown('We will need you to provide your current latitude and longitude.')
 st.markdown('Once you provide the latitude and longitude, we will find the nearest pharmacies for you.')
 st.markdown('You can find your current location from [here](https://www.gps-coordinates.net/my-location)')
 
-# Initialize the chatbot pipeline
-chatbot = pipeline("conversational")
 
 def get_user_location():
     default_latitude = -33.8837
