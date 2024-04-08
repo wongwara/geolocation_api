@@ -9,4 +9,4 @@ pandas == 2.2.1
 
 transformers
 
-pytorch
+TensorFlow
