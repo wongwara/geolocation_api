@@ -123,7 +123,7 @@ st.title('Oversea Student Healthcare Find Nearest Pharmacies')
 st.markdown('Welcome to New South Wales Nearest Pharmacies finding!, We will need you to provide your current latitude and longitude.')
 st.markdown('Once you provide the latitude and longitude, we will find the nearest pharmacies for you. You can find your current location from [here](https://www.gps-coordinates.net/my-location)')
 
-st.subtitle('You can try the following locations:')
+st.titel('You can try the following locations:')
 st.write("Try Sydnet Westfield location: lat -33.870098 and long 151.208817.")
 st.write("Try Sydney Opera House location: lat -33.85681 and long 151.21514.")
 st.write("Try Sydney Airport location: lat -33.9461 and long 151.17722.")
@@ -147,6 +147,10 @@ def chat():
             user_location = (latitude, longitude)
             nearest_pharmacies = location_api.find_nearest_pharmacies(user_location, yellow_pages, top_n=10)
             if nearest_pharmacies:
+                st.subheader("Top 10 Nearest Pharmacies:")
+                for i, (pharmacy, distance) in enumerate(nearest_pharmacies, start=1):
+                    st.write(f"#{i}: {pharmacy['pharmacy_name']} - Distance: {distance:.2f} km")
+
                 # Create a Folium map
                 map_center = user_location
                 m = folium.Map(location=map_center, zoom_start=15)
@@ -166,14 +170,6 @@ def chat():
 
                 # Display the map
                 folium_static(m)
-                
-                # Bot's response with the nearest pharmacy
-                nearest_pharmacy_name = nearest_pharmacies[0][0]['pharmacy_name']
-                st.write(f"The nearest pharmacy is {nearest_pharmacy_name}.")
-
-                st.subheader("Top 10 Nearest Pharmacies:")
-                for i, (pharmacy, distance) in enumerate(nearest_pharmacies, start=1):
-                    st.write(f"#{i}: {pharmacy['pharmacy_name']} - Distance: {distance:.2f} km")
 
             else:
                 st.error("No pharmacies found.")
