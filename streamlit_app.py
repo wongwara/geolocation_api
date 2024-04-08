@@ -5,7 +5,7 @@ import folium
 import pandas as pd
 from streamlit_folium import folium_static
 from geopy.distance import geodesic
-import location_api
+# import location_api
 from folium.plugins import MarkerCluster
 import time 
 
