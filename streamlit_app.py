@@ -124,6 +124,7 @@ st.markdown('Welcome to New South Wales Nearest Pharmacies finding!, We will nee
 st.markdown('Once you provide the latitude and longitude, we will find the nearest pharmacies for you. You can find your current location from [here](https://www.gps-coordinates.net/my-location)')
 
 def get_user_location_from_chat():
+    st.text("Bot: Hello")
     st.text("Bot: Please provide your current latitude and longitude in the following format: 'latitude, longitude'")
     user_input = st.text_input("You:", value="-33.8837,151.2006")
     if st.button("Submit"):
@@ -165,6 +166,10 @@ def chat():
                 # Display the map
                 folium_static(m)
                 
+                # Bot's response with the nearest pharmacy
+                nearest_pharmacy_name = nearest_pharmacies[0][0]['pharmacy_name']
+                st.write(f"The nearest pharmacy is {nearest_pharmacy_name}.")
+
                 st.subheader("Top 10 Nearest Pharmacies:")
                 for i, (pharmacy, distance) in enumerate(nearest_pharmacies, start=1):
                     st.write(f"#{i}: {pharmacy['pharmacy_name']} - Distance: {distance:.2f} km")
