@@ -133,13 +133,6 @@ def get_user_location_from_chat():
         chat_history.append(("You", user_input))
         return user_input
 
-st.subheader('You can try the following locations:')
-st.write("Try Sydnet Westfield location: lat -33.870098 and long 151.208817.")
-st.write("Try Sydney Opera House location: lat -33.85681 and long 151.21514.")
-st.write("Try Sydney Airport location: lat -33.9461 and long 151.17722.")
-st.write("Try Sydney Olympic Park location: lat -33.848461 and long 151.063713.")
-st.write("Try Penrith library location: lat -33.7505 and long 150.6899.")
-
 def chat():
     user_input = get_user_location_from_chat()
     if user_input:
@@ -177,4 +170,11 @@ def chat():
             st.error("Invalid input format. Please provide latitude and longitude in the format 'latitude, longitude'.")
 
 if __name__ == "__main__":
+    st.subheader('You can try the following locations:')
+    st.write("Try Sydnet Westfield location: lat -33.870098 and long 151.208817.")
+    st.write("Try Sydney Opera House location: lat -33.85681 and long 151.21514.")
+    st.write("Try Sydney Airport location: lat -33.9461 and long 151.17722.")
+    st.write("Try Sydney Olympic Park location: lat -33.848461 and long 151.063713.")
+    st.write("Try Penrith library location: lat -33.7505 and long 150.6899.")
+
     chat()
