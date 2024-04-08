@@ -6,3 +6,5 @@ folium
 streamlit_folium
 requests
 pandas == 2.2.1
+
+transformers
