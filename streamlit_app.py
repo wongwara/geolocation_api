@@ -126,43 +126,25 @@ st.markdown('Once you provide the latitude and longitude, we will find the neare
 st.markdown('You can find your current location from [here](https://www.gps-coordinates.net/my-location)')
 
 
+st.write("You can try the following locations:")
+st.write("Try Sydnet Westfield location: lat -33.870098 and long 151.208817.")
+st.write("Try Sydney Opera House location: lat -33.85681 and long 151.21514.")
+st.write("Try Sydney Airport location: lat -33.9461 and long 151.17722.")
+st.write("Try Sydney Olympic Park location: lat -33.848461 and long 151.063713.")
+st.write("Try Penrith library location: lat -33.7505 and long 150.6899.")
+
+
 def get_user_location():
     default_latitude = -33.8837
     default_longitude = 151.2006
     
     latitude = st.number_input("Enter latitude:", format="%.6f", min_value=-90.0, max_value=90.0, value=default_latitude)
     longitude = st.number_input("Enter longitude:", format="%.6f", value=default_longitude)
-    
     return latitude, longitude
 
-def get_current_location():
-    try:
-        response = requests.get('https://api.my-ip.io/v2/ip.json')
-        # Check if the response status code is 429 (Rate Limit Exceeded)
-        if response.status_code == 429:
-            print("Rate limit exceeded. Waiting for cooldown...")
-            time.sleep(120)  # Wait for 60 seconds before retrying
-            response = requests.get('https://api.my-ip.io/v2/ip.json')  # Retry the request
-
-        if response.status_code == 200:
-            location = response.json()
-            print("API response:", location)  # Debugging: Print API response
-            if 'location' in location and 'lat' in location['location'] and 'lon' in location['location']:
-                latitude = float(location['location']['lat'])
-                longitude = float(location['location']['lon'])
-                return latitude, longitude
-            else:
-                print("Latitude or longitude not found in API response.")
-                return None, None
-        else:
-            print("Error:", response.status_code)
-            return None, None
-    except requests.exceptions.RequestException as e:
-        print("Error:", e)
-        return None, None
 
 def chat():
-    user_location = get_current_location()
+    user_location = get_user_location()
     if user_location[0] is not None and user_location[1] is not None:
         nearest_pharmacies = location_api.find_nearest_pharmacies(user_location, yellow_pages, top_n=10)
         if nearest_pharmacies:
