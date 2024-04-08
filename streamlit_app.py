@@ -160,9 +160,14 @@ def chat():
 
                 # Display the map
                 folium_static(m)
+                nearest_pharmacies_df = pd.DataFrame(
+                [(pharmacy['pharmacy_name'], f"{distance:.2f} km") for pharmacy, distance in nearest_pharmacies],
+                columns=['Pharmacy Name', 'Distance (km)']
+            )
                 st.subheader("Top 10 Nearest Pharmacies:")
-                for i, (pharmacy, distance) in enumerate(nearest_pharmacies, start=1):
-                    st.write(f"#{i}: {pharmacy['pharmacy_name']} - Distance: {distance:.2f} km")
+                st.table(nearest_pharmacies_df)
+                # for i, (pharmacy, distance) in enumerate(nearest_pharmacies, start=1):
+                #     st.write(f"#{i}: {pharmacy['pharmacy_name']} - Distance: {distance:.2f} km")
 
             else:
                 st.error("No pharmacies found.")
