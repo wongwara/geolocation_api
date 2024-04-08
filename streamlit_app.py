@@ -128,11 +128,11 @@ st.markdown('You can find your current location from [here](https://www.gps-coor
 
 def get_user_location_from_chat():
     st.text("Bot: Please provide your current latitude and longitude in the following format: 'latitude, longitude'")
-    user_input = st.text_input("You:", value=" , ")
+    user_input = st.text_input("You:", value="-33.8837,151.2006")
 
     return user_input
 
-st.write("You can try the following locations:")
+st.title('You can try the following locations:')
 st.write("Try Sydnet Westfield location: lat -33.870098 and long 151.208817.")
 st.write("Try Sydney Opera House location: lat -33.85681 and long 151.21514.")
 st.write("Try Sydney Airport location: lat -33.9461 and long 151.17722.")
@@ -147,11 +147,7 @@ def chat():
             user_location = (latitude, longitude)
             nearest_pharmacies = location_api.find_nearest_pharmacies(user_location, yellow_pages, top_n=10)
             if nearest_pharmacies:
-                st.subheader("Top 10 Nearest Pharmacies:")
-                for i, (pharmacy, distance) in enumerate(nearest_pharmacies, start=1):
-                    st.write(f"#{i}: {pharmacy['pharmacy_name']} - Distance: {distance:.2f} km")
-
-             # Create a Folium map
+                # Create a Folium map
                 map_center = user_location
                 m = folium.Map(location=map_center, zoom_start=15)
 
@@ -170,6 +166,11 @@ def chat():
 
                 # Display the map
                 folium_static(m)
+                
+                st.subheader("Top 10 Nearest Pharmacies:")
+                for i, (pharmacy, distance) in enumerate(nearest_pharmacies, start=1):
+                    st.write(f"#{i}: {pharmacy['pharmacy_name']} - Distance: {distance:.2f} km")
+                    
             else:
                 st.error("No pharmacies found.")
         except ValueError:
