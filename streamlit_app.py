@@ -123,6 +123,13 @@ st.title('Oversea Student Healthcare Find Nearest Pharmacies')
 st.markdown('Welcome to New South Wales Nearest Pharmacies finding!, We will need you to provide your current latitude and longitude.')
 st.markdown('Once you provide the latitude and longitude, we will find the nearest pharmacies for you. You can find your current location from [here](https://www.gps-coordinates.net/my-location)')
 
+st.subtitle('You can try the following locations:')
+st.write("Try Sydnet Westfield location: lat -33.870098 and long 151.208817.")
+st.write("Try Sydney Opera House location: lat -33.85681 and long 151.21514.")
+st.write("Try Sydney Airport location: lat -33.9461 and long 151.17722.")
+st.write("Try Sydney Olympic Park location: lat -33.848461 and long 151.063713.")
+st.write("Try Penrith library location: lat -33.7505 and long 150.6899.")
+
 def get_user_location_from_chat():
     st.text("Bot: Hello")
     st.text("Bot: Please provide your current latitude and longitude in the following format: ")
@@ -131,12 +138,6 @@ def get_user_location_from_chat():
     if st.button("Submit"):
         chat_history.append(("You", user_input))
         return user_input
-st.subtitle('You can try the following locations:')
-st.write("Try Sydnet Westfield location: lat -33.870098 and long 151.208817.")
-st.write("Try Sydney Opera House location: lat -33.85681 and long 151.21514.")
-st.write("Try Sydney Airport location: lat -33.9461 and long 151.17722.")
-st.write("Try Sydney Olympic Park location: lat -33.848461 and long 151.063713.")
-st.write("Try Penrith library location: lat -33.7505 and long 150.6899.")
 
 def chat():
     user_input = get_user_location_from_chat()
