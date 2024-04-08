@@ -126,8 +126,8 @@ st.markdown('Once you provide the latitude and longitude, we will find the neare
 
 def get_user_location_from_chat():
     st.text("Bot: Hello")
-    st.text("Bot: Please provide your current latitude and longitude in the following format: ")
-    st.text('latitude, longitude'" ")
+    st.text("Bot: Please provide your current latitude and longitude ")
+    st.text('in the following format: latitude, longitude'" ")
     user_input = st.text_input("You:", value="-33.8837,151.2006")
     if st.button("Submit"):
         chat_history.append(("You", user_input))
