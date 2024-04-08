@@ -147,10 +147,6 @@ def chat():
             user_location = (latitude, longitude)
             nearest_pharmacies = location_api.find_nearest_pharmacies(user_location, yellow_pages, top_n=10)
             if nearest_pharmacies:
-                st.subheader("Top 10 Nearest Pharmacies:")
-                for i, (pharmacy, distance) in enumerate(nearest_pharmacies, start=1):
-                    st.write(f"#{i}: {pharmacy['pharmacy_name']} - Distance: {distance:.2f} km")
-
                 # Create a Folium map
                 map_center = user_location
                 m = folium.Map(location=map_center, zoom_start=15)
@@ -170,6 +166,9 @@ def chat():
 
                 # Display the map
                 folium_static(m)
+                st.subheader("Top 10 Nearest Pharmacies:")
+                for i, (pharmacy, distance) in enumerate(nearest_pharmacies, start=1):
+                    st.write(f"#{i}: {pharmacy['pharmacy_name']} - Distance: {distance:.2f} km")
 
             else:
                 st.error("No pharmacies found.")
