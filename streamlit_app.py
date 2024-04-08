@@ -9,9 +9,6 @@ import location_api
 from folium.plugins import MarkerCluster
 import time 
 
-# Importing the Chatbot model
-from transformers import pipeline
-
 yellow_pages = pd.read_csv('yellow_pages_pharmacy_df.csv') 
 nsw_pharmacy = pd.read_csv('nsw_pharmacy_df.csv') 
 
