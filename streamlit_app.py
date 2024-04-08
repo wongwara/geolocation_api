@@ -162,48 +162,9 @@ def get_current_location():
         return None, None
 
 def chat():
-    user_input = st.text_input("You:", value="")
-    
-    if st.button("Send"):
-        # Add user input to chat history
-        chat_history.append({"speaker": "You", "message": user_input})
-        
-        # Process user input
-        if "location" in user_input.lower():
-            st.text("Bot: Please provide your current latitude and longitude.")
-        elif "nearest pharmacies" in user_input.lower():
-            st.text("Bot: Finding nearest pharmacies...")
-            main()
-        else:
-            st.text("Bot: I'm sorry, I didn't understand that.")
-        
-        # Display chat history
-        for entry in chat_history:
-            st.text(f"{entry['speaker']}: {entry['message']}")
-        
-        # Clear the user input field
-        st.text_input("You:", value="", key="user_input")
-
-def main():
-    st.title("User Location and Nearest Pharmacies Finder")
-    st.write("Please provide your location and find the nearest pharmacies.")
-    
-    # Include chatbot interaction
-    chat()
-    
-    # Get user location
     user_location = get_current_location()
     if user_location[0] is not None and user_location[1] is not None:
-        st.write("User location:", user_location)
-        st.write("You can try the following locations:")
-        st.write("Try Sydnet Westfield location: lat -33.870098 and long 151.208817.")
-        st.write("Try Sydney Opera House location: lat -33.85681 and long 151.21514.")
-        st.write("Try Sydney Airport location: lat -33.9461 and long 151.17722.")
-        st.write("Try Sydney Olympic Park location: lat -33.848461 and long 151.063713.")
-        st.write("Try Penrith library location: lat -33.7505 and long 150.6899.")
-        # Find nearest pharmacies
         nearest_pharmacies = location_api.find_nearest_pharmacies(user_location, yellow_pages, top_n=10)
-
         if nearest_pharmacies:
             st.subheader("Top 10 Nearest Pharmacies:")
             for i, (pharmacy, distance) in enumerate(nearest_pharmacies, start=1):
@@ -234,4 +195,4 @@ def main():
         st.error("Failed to retrieve user location.")
 
 if __name__ == "__main__":
-    main()
+    chat()
