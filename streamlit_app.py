@@ -167,18 +167,20 @@ def get_current_location():
         return None, None
 
 def chat():
-    user_input = st.text_input("You:", value="Hello!")
+    user_input = st.text_input("You:", value="")
     
     if st.button("Send"):
         # Add user input to chat history
         chat_history.append({"speaker": "You", "message": user_input})
         
-        # Generate response from the chatbot
-        bot_response = chatbot(user_input)
-        bot_response_text = bot_response[0]['generated_text']
-        
-        # Add bot response to chat history
-        chat_history.append({"speaker": "Bot", "message": bot_response_text})
+        # Process user input
+        if "location" in user_input.lower():
+            st.text("Bot: Please provide your current latitude and longitude.")
+        elif "nearest pharmacies" in user_input.lower():
+            st.text("Bot: Finding nearest pharmacies...")
+            main()
+        else:
+            st.text("Bot: I'm sorry, I didn't understand that.")
         
         # Display chat history
         for entry in chat_history:
