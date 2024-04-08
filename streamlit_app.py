@@ -69,7 +69,7 @@ def main():
     st.write("Please provide your location and find the nearest pharmacies.")
 
     # Get user location
-    user_location = get_user_location()
+    user_location = get_current_location()
     if user_location[0] is not None and user_location[1] is not None:
         st.write("User location:", user_location)
         st.write("You can try the following locations:")
